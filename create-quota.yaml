@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: app-resource-quotas
+spec:
+  hard:
+    limits.cpu: "0.3"
