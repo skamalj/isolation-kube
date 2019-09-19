@@ -1,0 +1,13 @@
+//Get Node and Pods
+kubectl get pod -o=custom-columns=NODE:.spec.nodeName,NAME:.metadata.name -n app-a
+
+ gcloud config configurations activate appadev
+ kubectl config use-context appadev
+
+ gcloud config configurations activate default
+ kubectl config use-context admintest
+
+//Get Node and Labels
+ kubectl get nodes -o=custom-columns=NODE:.metadata.name,LABEL:.metadata.labels.app
+
+ //Remove taints
