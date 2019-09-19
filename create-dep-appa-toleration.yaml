@@ -18,7 +18,7 @@ spec:
       - key: "app"
         operator: "Equal"
         value: "appa"
-        effect: "NoExecute"
+        effect: "NoExecute"        
       nodeSelector:
         app: appa
       containers:

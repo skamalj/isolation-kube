@@ -1,0 +1,34 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredlabels
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredLabels
+        listKind: K8sRequiredLabelsList
+        plural: k8srequiredlabels
+        singular: k8srequiredlabels
+      validation:
+        # Schema for the `parameters` field
+        openAPIV3Schema:
+          properties:
+            nsname:
+              type: string
+            allowedtol: 
+               type: string  
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredlabels
+
+        violation[{"msg": msg, "details": {"missing_labels"}}] {
+          providedns := input.review.object.metadata.namespace
+          requiredns := input.parameters.nsname
+          providedtols := [ tols | tols := input.review.object.spec.template.spec.tolerations[j].value ]
+          requiredtols := input.parameters.allowedtols
+          providedtols[i] ==  requiredtols
+          providedns !=  requiredns
+          msg := sprintf("you must provide %v labels: %v", [providedtols, requiredtols])
+        }
