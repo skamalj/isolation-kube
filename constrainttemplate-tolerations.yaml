@@ -1,15 +1,15 @@
 apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
-  name: k8srequiredlabels
+  name: verifytolerations
 spec:
   crd:
     spec:
       names:
-        kind: K8sRequiredLabels
-        listKind: K8sRequiredLabelsList
-        plural: k8srequiredlabels
-        singular: k8srequiredlabels
+        kind: VerifyTolerations
+        listKind: VerifyTolerationsList
+        plural: verifytolerations
+        singular: verifytolerations
       validation:
         # Schema for the `parameters` field
         openAPIV3Schema:
@@ -21,7 +21,7 @@ spec:
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
-        package k8srequiredlabels
+        package verifytolerations
 
         violation[{"msg": msg, "details": {"missing_labels"}}] {
           providedns := input.review.object.metadata.namespace
@@ -30,5 +30,5 @@ spec:
           requiredtols := input.parameters.allowedtols
           providedtols[i] ==  requiredtols
           providedns !=  requiredns
-          msg := sprintf("you must provide %v labels: %v", [providedtols, requiredtols])
+          msg := sprintf("You cannot use %v toleration with %v namespace", [providedtols, providedns])
         }
